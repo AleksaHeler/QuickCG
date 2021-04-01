@@ -14,18 +14,21 @@ RUN: ./a.out
 #include <iostream>
 
 #include "quickcg/quickcg.h"
+
 using namespace QuickCG;
 using namespace std;
+
+#define FULLSCREEN 0
 
 int main(int argc, char *argv[])
 {
   /* DRAW A RAINBOW AND SOME TEXT */
-  screen(256, 256, 0, "Small Test Script");
+  screen(860, 640, FULLSCREEN, "Small Test Script");
   for(int x = 0; x < w; x++)
   for(int y = 0; y < h; y++)
   {
     //pset(x, y, ColorRGB(0, 128 + 128 * sin(x / 8.0), 0));
-    pset(x, y, ColorRGB(x, y, 128));
+    pset(x, y, ColorRGB(256*x / w, 256*y / h, 128));
   }
   print("Hello, world!", 16, 16);
 
