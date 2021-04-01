@@ -1,9 +1,11 @@
 /*
-Copyright (c) 2004, Lode Vandevenne
-All rights reserved.
 
-COMPILE: g++ *.cpp -lSDL -O3
+TODO: 
+  > makefile
+
+COMPILE: g++ main.cpp quickcg/quickcg.cpp -lSDL -O3
 RUN: ./a.out
+
 */
 
 #include <cmath>
@@ -11,22 +13,9 @@ RUN: ./a.out
 #include <vector>
 #include <iostream>
 
-#include "quickcg.h"
+#include "quickcg/quickcg.h"
 using namespace QuickCG;
 using namespace std;
-
-//place the example code below here:
-
-/*int main(int argc, char *argv[]) 
-{
-  screen(256,256, 0, "A Face!"); 
-  drawDisk(128, 128, 100, colorRGB(255, 128, 200)); 
-  drawDisk(88, 100, 10, colorRGB(0, 0, 255)); 
-  drawDisk(168, 100, 10, colorRGB(0, 0, 255)); 
-  drawLine(88, 150, 168, 150, colorRGB(255, 0, 0)); 
-  redraw(); 
-  sleep(); 
-}*/
 
 int main(int argc, char *argv[])
 {
