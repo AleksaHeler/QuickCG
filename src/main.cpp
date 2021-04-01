@@ -17,8 +17,20 @@ using namespace std;
 
 //place the example code below here:
 
-int main(int /*argc*/, char */*argv*/[])
+/*int main(int argc, char *argv[]) 
 {
+  screen(256,256, 0, "A Face!"); 
+  drawDisk(128, 128, 100, colorRGB(255, 128, 200)); 
+  drawDisk(88, 100, 10, colorRGB(0, 0, 255)); 
+  drawDisk(168, 100, 10, colorRGB(0, 0, 255)); 
+  drawLine(88, 150, 168, 150, colorRGB(255, 0, 0)); 
+  redraw(); 
+  sleep(); 
+}*/
+
+int main(int argc, char *argv[])
+{
+  /* DRAW A RAINBOW AND SOME TEXT */
   screen(256, 256, 0, "Small Test Script");
   for(int x = 0; x < w; x++)
   for(int y = 0; y < h; y++)
@@ -30,6 +42,13 @@ int main(int /*argc*/, char */*argv*/[])
 
   std::string test;
   test.resize(20);
+
+  /* DRAW A FACE */
+  /*screen(256,256, 0, "A Face!"); 
+  drawDisk(128, 128, 100, ColorRGB(255, 128, 200)); 
+  drawDisk(88, 100, 10, ColorRGB(0, 0, 255)); 
+  drawDisk(168, 100, 10, ColorRGB(0, 0, 255)); 
+  drawLine(88, 150, 168, 150, ColorRGB(255, 0, 0));*/
 
   redraw();
   sleep();
