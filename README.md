@@ -1,5 +1,5 @@
 # QuickCG
-Following [tutorials](https://lodev.org/cgtutor/) to get more familiar with computer graphics and rendering for games. Major parts of the code were written by [Lode Vandevenne](https://lodev.org/cgtutor/legal.html), and credit for the idea and math goes to him, I'm just following his examples.
+Following [tutorials](https://lodev.org/cgtutor/) to get more familiar with computer graphics and rendering for games. Major parts of the code were written by [Lode Vandevenne](https://lodev.org/cgtutor/legal.html), and credit for the idea and math goes to him, I'm just following his examples. For now mostly [Raycasting](https://lodev.org/cgtutor/raycasting.html).
 
 ## About
 Semi 3D raycasting engine. Takes a map (2d matrix of integers which represent what is there) and draws elements "3D" by varying the height based on distance.
