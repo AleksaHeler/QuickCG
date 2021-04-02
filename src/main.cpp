@@ -32,6 +32,12 @@ int main(int argc, char *argv[]) {
   /* The time of the current and the previous loop */
   float time, oldTime;
 
+  //input a string
+  std::string someText;
+  getInputString(someText, "Enter some text:", false, 0, 0);
+  //input an integer
+  int someInteger = getInput<int>("Enter an integer:", false, 0, 8);
+
   /* While user doesnt exit program (esc or close button)*/
   while(!done()) {
     /* Draw part of the color palette*/
