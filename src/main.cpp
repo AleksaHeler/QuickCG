@@ -73,6 +73,18 @@ int main(int argc, char *argv[]) {
     print("Y:", 16, 60);
     print(y, 64, 60);
 
+    int x1, y1, x2, y2; //The initial line, too big for the screen
+    int x3, y3, x4, y4; //Will become the clipped line
+    x1 = -50; //This is outside the screen!
+    y1 = -20; //This is outside the screen!
+    x2 = 1000; //This is outside the screen!
+    y2 = 1200; //This is outside the screen!
+    clipLine(x1,y1, x2, y2, x3, y3, x4, y4); //the new line represents the part of the old line that is visible on screen
+    drawLine(x3, y3, x4, y4, RGB_Red); //The newline is drawn as a red line
+    drawCircle(100, 100, 30, RGB_Green); //a green unfilled circle
+    drawDisk(200, 100, 20, RGB_Yellow); //a yellow filled circle
+    drawRect(150, 150, 200, 200, RGB_Cyan); //acyan square
+
     /* Send frame to GPU to be displayed */
     redraw();
     /* Clear the screen so the old position of the ball becomes black again */
