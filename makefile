@@ -16,11 +16,13 @@ LFLAGS	= -lSDL -O3
 
 # Make the project: compiles
 all: $(SOURCE) | out # checks if folder 'out' exists
-	$(CC) $(SOURCE) -o $(OUT) $(LFLAGS)
+	@echo "compiling..."
+	@$(CC) $(SOURCE) -o $(OUT) $(LFLAGS)
 
 # Run the project: compiles then runs
 run: all
-	./$(OUT)
+	@echo "running..."
+	@./$(OUT)
 
 # Create dir 'out' if it doesnt exist
 out:
