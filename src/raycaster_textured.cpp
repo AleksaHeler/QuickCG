@@ -18,8 +18,8 @@ using namespace QuickCG;
 // 640*480
 // 1280*1024
 // 1920*1080
-#define screenWidth 1280     /* Screen size */
-#define screenHeight 1024
+#define screenWidth 640     /* Screen size */
+#define screenHeight 480
 #define texWidth 64         /* Texture size */
 #define texHeight 64
 #define mapWidth 24         /* Map size */
