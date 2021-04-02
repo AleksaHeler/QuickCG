@@ -18,18 +18,23 @@ RUN: ./a.out
 using namespace QuickCG;
 using namespace std;
 
+#define WIDTH 640
+#define HEIGHT 480
 #define FULLSCREEN 0
+#define TITLE "Small Test Script"
 
 int main(int argc, char *argv[])
 {
   /* DRAW A RAINBOW AND SOME TEXT */
-  screen(860, 640, FULLSCREEN, "Small Test Script");
+  screen(WIDTH, HEIGHT, FULLSCREEN, TITLE);
+
   for(int x = 0; x < w; x++)
   for(int y = 0; y < h; y++)
   {
     //pset(x, y, ColorRGB(0, 128 + 128 * sin(x / 8.0), 0));
     pset(x, y, ColorRGB(256*x / w, 256*y / h, 128));
   }
+  
   print("Hello, world!", 16, 16);
 
   std::string test;
