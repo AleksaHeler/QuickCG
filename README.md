@@ -1,5 +1,12 @@
 # QuickCG
-Following [tutorials](https://lodev.org/cgtutor/) to get more familiar with computer graphics and rendering for games
+Following [tutorials](https://lodev.org/cgtutor/) to get more familiar with computer graphics and rendering for games. Major parts of the code were written by [Lode Vandevenne](https://lodev.org/cgtutor/legal.html), and credit for the idea and math goes to him, I'm just following his examples.
+
+## About
+Semi 3D raycasting engine. Takes a map (2d matrix of integers which represent what is there) and draws elements "3D" by varying the height based on distance.
+
+This has limitations: there is no height difference in map, stairs or jumping. But it works fast and is easy to make and will be used in some of my future projects.
+
+In the way presented in this tutorial, an algorithm is used that's based on DDA or "Digital Differential Analysis". DDA is a fast algorithm typically used on square grids to find which squares a line hits (for example to draw a line on a screen, which is a grid of square pixels). So we can also use it to find which squares of the map our ray hits, and stop the algorithm once a square that is a wall is hit.
 
 ## Prerequisites
 [Simple DirectMedia Layer](https://www.libsdl.org/) (SDL) library: ``` sudo apt install libsdl-dev ```
