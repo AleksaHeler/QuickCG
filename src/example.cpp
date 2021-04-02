@@ -1,13 +1,3 @@
-/*
-
-TODO: 
-  > makefile
-
-COMPILE: g++ main.cpp quickcg/quickcg.cpp -lSDL -O3
-RUN: ./a.out
-
-*/
-
 #include <cmath>
 #include <string>
 #include <vector>
