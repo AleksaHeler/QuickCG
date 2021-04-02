@@ -29,18 +29,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "quickcg/quickcg.h"
 using namespace QuickCG;
 
-/*
-g++ *.cpp -lSDL -O3 -W -Wall -ansi -pedantic
-g++ *.cpp -lSDL
-*/
-
-//place the example code below here:
-
 #define screenWidth 640
 #define screenHeight 480
 #define mapWidth 24
 #define mapHeight 24
 
+/* The map of the world is a 2D array, where each value represents a square 
+   If the value is 0, that square represents an empty, walkthroughable square, and if 
+   the value is higher than 0, it represents a wall with  a certain color or texture.
+   The map declared here is very small, only 24 by 24 squares, and is defined directly 
+   in the code. For a real game, like Wolfenstein 3D, you use a bigger map and load it 
+   from a file instead. All the zero's in the grid are empty space, so basicly you see 
+   a very big room, with a wall around it (the values 1), a small room inside it (the 
+   values 2), a few pilars (the values 3), and a corridor with a room (the values 4). */
 int worldMap[mapWidth][mapHeight]=
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -69,11 +70,14 @@ int worldMap[mapWidth][mapHeight]=
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-int main(int /*argc*/, char */*argv*/[])
+int main(int argc, char *argv[])
 {
-  double posX = 22, posY = 12;  //x and y start position
-  double dirX = -1, dirY = 0; //initial direction vector
-  double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+  double posX = 22, posY = 12;  // player x and y start position
+  double dirX = -1, dirY = 0; // initial player direction vector
+  double planeX = 0, planeY = 0.66; // the 2d raycaster version of camera plane
+  /* camera plane is perpendicular to the direction */
+  /* but we can change the length of it. The ratio between the length
+     of the direction and the camera plane determinates the FOV*/
 
   double time = 0; //time of current frame
   double oldTime = 0; //time of previous frame
