@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 #include <iostream>
 
-#include "quickcg/quickcg.h"
+#include "quickcg.h"
 using namespace QuickCG;
 
 /*
