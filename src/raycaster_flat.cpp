@@ -93,6 +93,8 @@ int main(int argc, char *argv[]) {
        This is the loop that draws the whole 
        frame and reads the input every time. */
     while(!done()) {
+        
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /* Goes through screen width, so there isn't a calculation 
             for every pixel of the screen, but only for every 
@@ -264,6 +266,8 @@ int main(int argc, char *argv[]) {
             /* Draw the pixels of the stripe as a vertical line */
             verLine(x, drawStart, drawEnd, color);
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /* Timing for input and FPS counter */
         oldTime = time;
