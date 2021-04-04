@@ -34,9 +34,6 @@ g++ *.cpp -lSDL -O3 -W -Wall -ansi -pedantic
 g++ *.cpp -lSDL
 */
 
-// set to 1 to use the horizontal floor algorithm (contributed by Ádám Tóth in 2019),
-// or to 0 to use the slower vertical floor algorithm.
-#define FLOOR_HORIZONTAL 1
 
 #define screenWidth 640
 #define screenHeight 480
@@ -127,8 +124,6 @@ int main(int /*argc*/, char */*argv*/[])
   double posX = 22.0, posY = 11.5; //x and y start position
   double dirX = -1.0, dirY = 0.0; //initial direction vector
   double planeX = 0.0, planeY = 0.66; //the 2d raycaster version of camera plane
-  double pitch = 0; // looking up/down, expressed in screen pixels the horizon shifts
-  double posZ = 0; // vertical camera strafing up/down, for jumping/crouching. 0 means standard height. Expressed in screen pixels a wall at distance 1 shifts
 
   double time = 0; //time of current frame
   double oldTime = 0; //time of previous frame
@@ -159,13 +154,9 @@ int main(int /*argc*/, char */*argv*/[])
   //start the main loop
   while(!done())
   {
-#if FLOOR_HORIZONTAL
     //FLOOR CASTING
-    for(int y = 0; y < screenHeight; ++y)
+    for(int y = screenHeight / 2 + 1; y < screenHeight; ++y)
     {
-      // whether this section is floor or ceiling
-      bool is_floor = y > screenHeight / 2 + pitch;
-
       // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
       float rayDirX0 = dirX - planeX;
       float rayDirY0 = dirY - planeY;
@@ -173,30 +164,14 @@ int main(int /*argc*/, char */*argv*/[])
       float rayDirY1 = dirY + planeY;
 
       // Current y position compared to the center of the screen (the horizon)
-      int p = is_floor ? (y - screenHeight / 2 - pitch) : (screenHeight / 2 - y + pitch);
+      int p = y - screenHeight / 2;
 
       // Vertical position of the camera.
-      // NOTE: with 0.5, it's exactly in the center between floor and ceiling,
-      // matching also how the walls are being raycasted. For different values
-      // than 0.5, a separate loop must be done for ceiling and floor since
-      // they're no longer symmetrical.
-      float camZ = is_floor ? (0.5 * screenHeight + posZ) : (0.5 * screenHeight - posZ);
+      float posZ = 0.5 * screenHeight;
 
       // Horizontal distance from the camera to the floor for the current row.
       // 0.5 is the z position exactly in the middle between floor and ceiling.
-      // NOTE: this is affine texture mapping, which is not perspective correct
-      // except for perfectly horizontal and vertical surfaces like the floor.
-      // NOTE: this formula is explained as follows: The camera ray goes through
-      // the following two points: the camera itself, which is at a certain
-      // height (posZ), and a point in front of the camera (through an imagined
-      // vertical plane containing the screen pixels) with horizontal distance
-      // 1 from the camera, and vertical position p lower than posZ (posZ - p). When going
-      // through that point, the line has vertically traveled by p units and
-      // horizontally by 1 unit. To hit the floor, it instead needs to travel by
-      // posZ units. It will travel the same ratio horizontally. The ratio was
-      // 1 / p for going through the camera plane, so to go posZ times farther
-      // to reach the floor, we get that the total horizontal distance is posZ / p.
-      float rowDistance = camZ / p;
+      float rowDistance = posZ / p;
 
       // calculate the real world step vector we have to add for each x (parallel to camera plane)
       // adding step by step avoids multiplications with a weight in the inner loop
@@ -228,21 +203,17 @@ int main(int /*argc*/, char */*argv*/[])
         int ceilingTexture = 6;
         Uint32 color;
 
+        // floor
+        color = texture[floorTexture][texWidth * ty + tx];
+        color = (color >> 1) & 8355711; // make a bit darker
+        buffer[y][x] = color;
 
-        if(is_floor) {
-          // floor
-          color = texture[floorTexture][texWidth * ty + tx];
-          color = (color >> 1) & 8355711; // make a bit darker
-          buffer[y][x] = color;
-        } else {
-          //ceiling
-          color = texture[ceilingTexture][texWidth * ty + tx];
-          color = (color >> 1) & 8355711; // make a bit darker
-          buffer[y][x] = color;
-        }
+        //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+        color = texture[ceilingTexture][texWidth * ty + tx];
+        color = (color >> 1) & 8355711; // make a bit darker
+        buffer[screenHeight - y - 1][x] = color;
       }
     }
-#endif // FLOOR_HORIZONTAL
 
     // WALL CASTING
     for(int x = 0; x < w; x++)
@@ -321,17 +292,17 @@ int main(int /*argc*/, char */*argv*/[])
       int lineHeight = (int)(h / perpWallDist);
 
       //calculate lowest and highest pixel to fill in current stripe
-      int drawStart = -lineHeight / 2 + h / 2 + pitch + (posZ / perpWallDist);
+      int drawStart = -lineHeight / 2 + h / 2;
       if(drawStart < 0) drawStart = 0;
-      int drawEnd = lineHeight / 2 + h / 2 + pitch + (posZ / perpWallDist);
+      int drawEnd = lineHeight / 2 + h / 2;
       if(drawEnd >= h) drawEnd = h - 1;
       //texturing calculations
       int texNum = worldMap[mapX][mapY] - 1; //1 subtracted from it so that texture 0 can be used!
 
       //calculate value of wallX
       double wallX; //where exactly the wall was hit
-      if(side == 0) wallX = posY + perpWallDist * rayDirY;
-      else          wallX = posX + perpWallDist * rayDirX;
+      if (side == 0) wallX = posY + perpWallDist * rayDirY;
+      else           wallX = posX + perpWallDist * rayDirX;
       wallX -= floor((wallX));
 
       //x coordinate on the texture
@@ -343,7 +314,7 @@ int main(int /*argc*/, char */*argv*/[])
       // How much to increase the texture coordinate per screen pixel
       double step = 1.0 * texHeight / lineHeight;
       // Starting texture coordinate
-      double texPos = (drawStart - pitch - (posZ / perpWallDist) - h / 2 + lineHeight / 2) * step;
+      double texPos = (drawStart - h / 2 + lineHeight / 2) * step;
       for(int y = drawStart; y < drawEnd; y++)
       {
         // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
@@ -357,80 +328,6 @@ int main(int /*argc*/, char */*argv*/[])
 
       //SET THE ZBUFFER FOR THE SPRITE CASTING
       ZBuffer[x] = perpWallDist; //perpendicular distance is used
-
-#if !FLOOR_HORIZONTAL
-      //FLOOR CASTING
-      double floorXWall, floorYWall; //x, y position of the floor texel at the bottom of the wall
-
-      //4 different wall directions possible
-      if(side == 0 && rayDirX > 0)
-      {
-        floorXWall = mapX;
-        floorYWall = mapY + wallX;
-      }
-      else if(side == 0 && rayDirX < 0)
-      {
-        floorXWall = mapX + 1.0;
-        floorYWall = mapY + wallX;
-      }
-      else if(side == 1 && rayDirY > 0)
-      {
-        floorXWall = mapX + wallX;
-        floorYWall = mapY;
-      }
-      else
-      {
-        floorXWall = mapX + wallX;
-        floorYWall = mapY + 1.0;
-      }
-
-      double distWall, distPlayer, currentDist;
-
-      distWall = perpWallDist;
-      distPlayer = 0.0;
-
-      if(drawEnd < 0) drawEnd = h; //becomes < 0 when the integer overflows
-
-      // draw the ceiling from the top of the screen to drawStart
-      for(int y = 0; y < drawStart; y++)
-      {
-        currentDist = (h - (2.0 * posZ)) / (h - 2.0 * (y - pitch));
-
-        double weight = (currentDist - distPlayer) / (distWall - distPlayer);
-
-        // Some variables here are called floor but apply to the ceiling here
-        double currentFloorX = weight * floorXWall + (1.0 - weight) * posX;
-        double currentFloorY = weight * floorYWall + (1.0 - weight) * posY;
-
-        int floorTexX, floorTexY;
-        floorTexX = int(currentFloorX * texWidth) & (texWidth - 1);
-        floorTexY = int(currentFloorY * texHeight) & (texHeight - 1);
-
-        buffer[y][x] = texture[6][texWidth * floorTexY + floorTexX];
-      }
-
-      //draw the floor from drawEnd to the bottom of the screen
-      for(int y = drawEnd + 1; y < h; y++)
-      {
-        currentDist = (h + (2.0 * posZ)) / (2.0 * (y - pitch) - h);
-
-        double weight = (currentDist - distPlayer) / (distWall - distPlayer);
-
-        double currentFloorX = weight * floorXWall + (1.0 - weight) * posX;
-        double currentFloorY = weight * floorYWall + (1.0 - weight) * posY;
-
-        int floorTexX, floorTexY;
-        floorTexX = int(currentFloorX * texWidth) & (texWidth - 1);
-        floorTexY = int(currentFloorY * texHeight) & (texHeight - 1);
-
-        int checkerBoardPattern = ((int)currentFloorX + (int)currentFloorY) & 1;
-        int floorTexture;
-        if(checkerBoardPattern == 0) floorTexture = 3;
-        else floorTexture = 4;
-
-        buffer[y][x] = (texture[floorTexture][texWidth * floorTexY + floorTexX] >> 1) & 8355711;
-      }
-#endif // !FLOOR_HORIZONTAL
     }
 
     //SPRITE CASTING
@@ -465,7 +362,7 @@ int main(int /*argc*/, char */*argv*/[])
       #define uDiv 1
       #define vDiv 1
       #define vMove 0.0
-      int vMoveScreen = int(vMove / transformY) + pitch + posZ / transformY;
+      int vMoveScreen = int(vMove / transformY);
 
       //calculate height of the sprite on screen
       int spriteHeight = abs(int(h / (transformY))) / vDiv; //using "transformY" instead of the real distance prevents fisheye
@@ -550,34 +447,10 @@ int main(int /*argc*/, char */*argv*/[])
       planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
       planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
     }
-
-    // Very simple demonstration jump/pitch controls
-    if(keyDown(SDLK_PAGEUP))
+    if(keyDown(SDLK_ESCAPE))
     {
-      // look up
-      pitch += 400 * moveSpeed;
-      if(pitch > 200) pitch = 200;
+      break;
     }
-    if(keyDown(SDLK_PAGEDOWN))
-    {
-      // look down
-      pitch -= 400 * moveSpeed;
-      if(pitch < -200) pitch = -200;
-    }
-    if(keyDown(SDLK_SPACE))
-    {
-      // jump
-      posZ = 200;
-    }
-    if(keyDown(SDLK_LSHIFT))
-    {
-      // crouch
-      posZ = -200;
-    }
-    if(pitch > 0) pitch = std::max<double>(0, pitch - 100 * moveSpeed);
-    if(pitch < 0) pitch = std::min<double>(0, pitch + 100 * moveSpeed);
-    if(posZ > 0) posZ = std::max<double>(0, posZ - 100 * moveSpeed);
-    if(posZ < 0) posZ = std::min<double>(0, posZ + 100 * moveSpeed);
   }
 }
 
