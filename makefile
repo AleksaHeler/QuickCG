@@ -7,11 +7,11 @@
 # make run-raycaster-textured - makes and runs textured raycaster example
 
 # Vars:
-SOURCE	= src/main.cpp src/quickcg/quickcg.cpp
+SOURCE	= src/main.cpp src/quickcg/quickcg.cpp src/functions.h
 OUT		= out/test.out
 CC		= g++
 FLAGS	= -g -c -Wall
-LFLAGS	= -lSDL -O3
+LFLAGS	= -lSDL_image -lSDL -O3
 
 # Terms used
 .PHONY: main run raycaster-flat raycaster-textured run-raycaster-flat run-raycaster-textured clean

@@ -10,6 +10,7 @@ In the way presented in this tutorial, an algorithm is used that's based on DDA 
 
 ## Prerequisites
 [Simple DirectMedia Layer](https://www.libsdl.org/) (SDL) library: ``` sudo apt install libsdl-dev ```
+apt install libsdl2-image-dev
 
 ## Makefile
 
