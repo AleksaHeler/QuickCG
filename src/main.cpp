@@ -126,7 +126,7 @@ void bayer_dithering(){
     for(int y = 0; y < h; y++){
         for(int x = 0; x < w; x++){
             ColorRGB rgb = image[x+y*w];
-		    double lum = 0.3333*rgb.r + 0.3333*rgb.g + 0.3333*rgb.b;
+		    int lum = 0.3333*rgb.r + 0.3333*rgb.g + 0.3333*rgb.b;
             (lum/256.0 > (double)bayer6x6[x%6][y%6]/35.0) ? pset(x, y, RGB_White) : pset(x, y, RGB_Black);
         }
     }
